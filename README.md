@@ -29,7 +29,8 @@ The former is one that will normally be used, but it is sometimes necessary to r
 
 ### Examples
     // map the length of the line passed in for long lines
-    // e.g. "isaac" -> ("5", "1")
+    // e.g. "tottenham hotspur" -> Some ("17", "1")
+    // "isaac" -> None
     let mapLineLength line = 
         match line |> Seq.length with
         | len when len > 10 -> Some((line |> Seq.length).ToString(), "1")
