@@ -18,14 +18,14 @@ HadoopFs makes life easier for the F# developer that wants to develop map/reduce
 Mappers and reducers have no restrictions in their makeup e.g. method, base class, function etc. - they simply must have one of the following two signatures
 
     // mappers
-    string -> (string * string) option
-    string -> (string * string) seq
+    string -> (string * 'a) option
+    string -> (string * 'a) seq
     
     // reducers
-    string * (string seq) -> (string * string) option
-    string * (string seq) -> (string * string) seq
+    string * (string seq) -> (string * 'a) option
+    string * (string seq) -> (string * 'a) seq
 
-The former is one that will normally be used, but it is sometimes necessary to return multiple outputs from a single call to a mapper or reducer.
+The first signature for each type is the one that is commonly used, but it is sometimes necessary to return multiple outputs from a single call to a mapper or reducer.
 
 ### Examples
     // map the length of the line passed in for long lines
