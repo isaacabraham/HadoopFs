@@ -1,5 +1,7 @@
 ﻿open HadoopFs.Core
+open HadoopFs.IO
 open HadoopFs.Samples
+open HadoopFs.Testability
 
 let inputFile = @"outlineofscience.txt"
 
@@ -10,5 +12,5 @@ let inputFile = @"outlineofscience.txt"
 
 [<EntryPoint>]
 let mainMap argv =
-    HadoopFs.Testability.doMapReduce <| ManyOutputs WordCount.Mapper <| SingleOutput WordCount.Reducer <| HadoopFs.IO.Readers.TestableConsole <| HadoopFs.IO.Writers.Console
+    doMapReduce <| ManyOutputs WordCount.Mapper <| SingleOutput WordCount.Reducer <| Readers.TestableConsole <| Writers.Console
     0

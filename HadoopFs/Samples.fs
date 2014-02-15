@@ -1,4 +1,4 @@
-﻿/// A sample map reducer that counts words in a document.
+﻿/// A sample map reducer that counts words in a document. Notice how the outputs of both map and reduce do not have to be strings.
 module HadoopFs.Samples.WordCount
 
 open System
@@ -7,12 +7,12 @@ open System
 let Mapper (row : string) = 
     row.Split([| ' ' |], System.StringSplitOptions.RemoveEmptyEntries)
     |> Seq.countBy id
-    |> Seq.map (fun (key, count) -> key, count.ToString())
+    |> Seq.map (fun (key, count) -> key, count)
 
 /// A sample reducer that counts words supplied from the word count Mapper.
-let Reducer(key : string, values) = 
+let Reducer (key, values) = 
     let total = 
         values
         |> Seq.map Int32.Parse
         |> Seq.sum
-    Some (key, total.ToString())
+    Some (key, total)

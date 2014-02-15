@@ -28,5 +28,5 @@ let ``Testing calls to reduce with datasets``() =
 let ``Testing combined map and reduce``() = 
     // Do a "full" map reduce using any input source piped through and map and reduce.
     let data = [ "hello hello there"; "hello goodbye"; "there you are" ]
-    let reducedOutput = doInMemoryMapReduce (ManyOutputs WordCount.Mapper) (SingleOutput WordCount.Reducer) data
+    let reducedOutput = doInMemoryMapReduce <| ManyOutputs WordCount.Mapper <| SingleOutput WordCount.Reducer <| data
     reducedOutput |> Seq.iter (printfn "%A")
