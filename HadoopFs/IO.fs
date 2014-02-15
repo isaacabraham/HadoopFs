@@ -5,15 +5,20 @@ open System.IO
 
 /// Provides a set of readers to use within streaming map tasks.
 module Readers = 
-    /// Reads from the Console as a sequence of strings.
-    let Console =
+    let private actualConsole terminator =
         seq { 
             let line = ref (Console.ReadLine())
-            while (!line <> null) do
+            while (!line <> terminator) do
                 yield !line
                 line := Console.ReadLine() 
         }
+
+    /// Reads from the Console as a sequence of strings; will terminate on a null string.
+    let Console = actualConsole null
     
+    /// Reads from the Console as a sequence of strings; will terminate on an empty string.
+    let TestableConsole = actualConsole String.Empty
+
     /// Reads from a file.
     let FileSystem(path : string) = File.ReadLines(path)
 
