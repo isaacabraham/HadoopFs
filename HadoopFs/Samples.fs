@@ -15,4 +15,4 @@ let Reducer(key : string, values) =
         values
         |> Seq.map Int32.Parse
         |> Seq.sum
-    [ key, total.ToString() ]
+    Some (key, total.ToString())

@@ -37,17 +37,32 @@ module internal Helpers =
                 line := getNextRow()
         }
 
-let private processToOutput (action, outputRow) = 
-    Seq.collect action >> Seq.iter (fun (key, value) -> outputRow <| sprintf "%s\t%s" key value)
+/// A key/value pair that represents a single output from a Map or Reduce.
+type HadoopOutput = string * string
+/// The input for a reducer is a key and a set of values
+type ReducerInput = string * seq<string>
 
-/// Runs a mapper using a custom Reader and Writer
+/// Represents the different outputs that a Map or Reducer can have.
+type MRFunction<'a> = 
+    /// A mapper or reducer that contains zero or one output.
+    | SingleValue of ('a -> HadoopOutput option)
+    /// A mapper or reducer that contains many outputs.
+    | MultiValue of ('a -> seq<HadoopOutput>)
+
+let private processToOutput (action, outputRow) = 
+    match action with
+    | SingleValue action -> Seq.choose action
+    | MultiValue action -> Seq.collect action
+    >> Seq.iter (fun (key, value) -> outputRow <| sprintf "%s\t%s" key value)
+
+/// Runs a mapper using a custom Reader and Writer.
 let doMapCustom (mapper, getNextRow, outputRow) = 
     getNextRow
     |> Helpers.makeSequence
     |> processToOutput (mapper, outputRow)
 
-/// Runs a reducer using a custom Reader and Writer
-let doReduceCustom (reducer, (getNextRow : unit -> string), outputRow) = 
+/// Runs a reducer using a custom Reader and Writer.
+let doReduceCustom (reducer:MRFunction<ReducerInput>, (getNextRow : unit -> string), outputRow) = 
     getNextRow
     |> Helpers.makeSequence
     |> Seq.map Helpers.intoKeyValue
