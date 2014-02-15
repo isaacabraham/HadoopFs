@@ -16,17 +16,17 @@ let ``Testing calls to map with datasets``() =
     // Run the WordCount mapper over an input set from an in-memory collection, and output the results to the interactive shell
     // Alternatively you can use one of the in-built input / output streams e.g. file system, console etc.
     let data = [ "hello hello there"; "hello goodbye"; "there you are" ]
-    doMapCustom (MultiValue WordCount.Mapper, IO.Readers.Collection(data), printfn "%s")
+    doMapCustom (data, printfn "%s") <| ManyOutputs WordCount.Mapper
     ignore()
 
 let ``Testing calls to reduce with datasets``() = 
     // Note that doReduce always expects keys to have been sorted (this is done automatically by Hadoop)
     let data = [ "hello\t2"; "hello\t1"; "goodbye\t1" ]
-    doReduceCustom (SingleValue WordCount.Reducer, IO.Readers.Collection(data), printfn "%s")
+    doReduceCustom (data, printfn "%s") <| SingleOutput WordCount.Reducer
     ignore()
 
 let ``Testing combined map and reduce``() = 
     // Do a "full" map reduce using any input source piped through and map and reduce.
     let data = [ "hello hello there"; "hello goodbye"; "there you are" ]
-    let reducedOutput = doInMemoryMapReduce (MultiValue WordCount.Mapper, SingleValue WordCount.Reducer, data)
+    let reducedOutput = doInMemoryMapReduce (ManyOutputs WordCount.Mapper) (SingleOutput WordCount.Reducer) data
     reducedOutput |> Seq.iter (printfn "%A")

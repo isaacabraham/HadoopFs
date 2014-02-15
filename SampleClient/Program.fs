@@ -5,10 +5,10 @@ let inputFile = @"outlineofscience.txt"
 
 // A reducer exe
 let mainReduce argv =
-    doReduce <| SingleValue WordCount.Reducer
+    doReduce <| SingleOutput WordCount.Reducer
     0
 
 [<EntryPoint>]
 let mainMap argv =
-    doMap <| MultiValue WordCount.Mapper
+    doMap <| ManyOutputs WordCount.Mapper
     0
