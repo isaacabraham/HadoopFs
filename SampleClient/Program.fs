@@ -3,14 +3,14 @@ open HadoopFs.IO
 open HadoopFs.Samples
 open HadoopFs.Testability
 
-let inputFile = @"outlineofscience.txt"
-
-//// A reducer exe
-//let mainReduce argv =
-//    doReduce <| SingleOutput WordCount.Reducer
+// A reducer exe
+//let mainReduce argv = 
+//    SingleOutput WordCount.Reducer |> doReduce
 //    0
 
 [<EntryPoint>]
-let mainMap argv =
-    doMapReduce <| ManyOutputs WordCount.Mapper <| SingleOutput WordCount.Reducer <| Readers.TestableConsole <| Writers.Console
+let mainMap argv = 
+    // Push the wordcount map / reduce through the console.
+    (ManyOutputs WordCount.Mapper, SingleOutput WordCount.Reducer) 
+    ||> doMapReduce (Readers.TestableConsole, Writers.Console)
     0

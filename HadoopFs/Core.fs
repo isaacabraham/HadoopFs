@@ -28,18 +28,18 @@ module internal Helpers =
         let parts = line.Split('\t')
         parts.[0], parts.[1]
 
-/// Represents the different outputs that a Map or Reducer can have.
-type MRFunction<'a,'b> = 
+/// Represents the different types of Map or Reducer.
+type MRFunction<'a,'b,'c> = 
     /// A mapper or reducer that contains zero or one output.
-    | SingleOutput of ('a -> (string * 'b) option)
+    | SingleOutput of ('a -> ('c * 'b) option)
     /// A mapper or reducer that contains many outputs.
-    | ManyOutputs of ('a -> seq<string * 'b>)
+    | ManyOutputs of ('a -> seq<'c * 'b>)
 
 let private processToOutput (action, writer) =
     match action with
     | SingleOutput action -> Seq.choose action
     | ManyOutputs action -> Seq.collect action
-    >> Seq.map (fun (key, value) -> sprintf "%s\t%A" key value)
+    >> Seq.map (fun (key, value) -> sprintf "%s\t%s" (key.ToString()) (value.ToString()))
     >> Seq.iter writer
 
 /// Runs a mapper using a custom Reader and Writer.

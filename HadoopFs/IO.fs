@@ -24,10 +24,10 @@ module Readers =
 
 /// Provides a set of writers to use within streaming reduce tasks.
 module Writers = 
-    /// Writes to the Console
+    /// Writes to the Console.
     let Console (line:string) = Console.WriteLine line
     
-    /// Writes to a file
+    /// Writes to a file.
     let FileSystem path = 
         fun (line : string) -> 
             use writer = new StreamWriter(path, true)
