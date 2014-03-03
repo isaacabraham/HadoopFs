@@ -3,14 +3,21 @@ open HadoopFs.IO
 open HadoopFs.Samples
 open HadoopFs.Testability
 
-// A reducer exe
-//let mainReduce argv = 
-//    SingleOutput WordCount.Reducer |> doReduce
+//let mapAndReducer = (ManyOutputs WordCount.Mapper, SingleOutput WordCount.Reducer) ||> doMapReduce
+//let consoleIo = (Writers.Console, Readers.TestableConsole)
+
+// A test map reduce exe
+//let mainMapReduce argv = 
+//    consoleIo ||> mapAndReducer 
+//    0
+
+// A mapper exe
+//let mainMap argv = 
+//    doMap <| ManyOutputs WordCount.Mapper
 //    0
 
 [<EntryPoint>]
-let mainMap argv = 
-    // Push the wordcount map / reduce through the console.
-    (ManyOutputs WordCount.Mapper, SingleOutput WordCount.Reducer) 
-    ||> doMapReduce (Readers.TestableConsole, Writers.Console)
+// A reducer exe
+let mainReduce argv = 
+    doReduce <| SingleOutput WordCount.Reducer
     0

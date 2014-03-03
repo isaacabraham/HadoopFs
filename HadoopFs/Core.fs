@@ -26,16 +26,18 @@ module internal Helpers =
     /// Create a key/value pair from a string.
     let intoKeyValue (line : string) = 
         let parts = line.Split('\t')
-        parts.[0], parts.[1]
+        match parts with
+        | [| key; value |] -> key,value
+        | _ -> failwith "line should only have two parts when split on tab"
 
 /// Represents the different types of Map or Reducer.
-type MRFunction<'a,'b,'c> = 
+type MRFunction<'a, 'b, 'c> = 
     /// A mapper or reducer that contains zero or one output.
     | SingleOutput of ('a -> ('c * 'b) option)
     /// A mapper or reducer that contains many outputs.
     | ManyOutputs of ('a -> seq<'c * 'b>)
 
-let private processToOutput (action, writer) =
+let private processToOutput (action, writer) = 
     match action with
     | SingleOutput action -> Seq.choose action
     | ManyOutputs action -> Seq.collect action
@@ -43,17 +45,17 @@ let private processToOutput (action, writer) =
     >> Seq.iter writer
 
 /// Runs a mapper using a custom Reader and Writer.
-let doMapCustom (reader, writer) mapper = reader |> processToOutput (mapper, writer)
+let doMapCustom mapper writer reader = reader |> processToOutput (mapper, writer)
 
 /// Runs a reducer using a custom Reader and Writer.
-let doReduceCustom (reader, writer) reducer = 
+let doReduceCustom reducer writer reader = 
     reader
     |> Seq.map Helpers.intoKeyValue
     |> Helpers.groupByAdjacent
     |> processToOutput (reducer, writer)
 
 /// Runs a mapper using the Console for IO, ideal for use with Streaming Hadoop.
-let doMap mapper = doMapCustom (Readers.Console, Writers.Console) mapper
+let doMap mapper = doMapCustom mapper Writers.Console Readers.Console
 
 /// Runs a reducer using the Console for IO, ideal for use with Streaming Hadoop.
-let doReduce reducer = doReduceCustom (Readers.Console, Writers.Console) reducer
+let doReduce reducer = doReduceCustom reducer Writers.Console Readers.Console
